@@ -1,0 +1,33 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+.env
+media/
+staticfiles/
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+.idea/
+.vscode/
+private_media/
+private_media_local/
+
+# Local instructions and validation reports
+AGENTS.md
+.cline-validation/
+
+# Environment configuration and secrets
+.env*
+
+# Local databases and generated files
+*.sqlite3
+*.db
+media/
+staticfiles/
+
+# Unrelated local files
+/0
+/re
