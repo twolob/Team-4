@@ -1,0 +1,2348 @@
+{
+  "info": {
+    "name": "AgTrack Local API - Complete Testing Flow",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Run once in order, one iteration. Registration generates new phone numbers. Creates persistent sample records on the selected API. Tests include expected 401,403,404,409,422 responses. No admin credentials required. Start the backend first. Use collection variables and remove environment variables that shadow them."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "farmer_password",
+      "value": "AgTrackPostman2026!",
+      "type": "string"
+    },
+    {
+      "key": "farmer_phone",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "other_phone",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "other_access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "farm_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "item_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "transaction_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "expense_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "harvest_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "traceability_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "batch_code",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "loss_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "report_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "stock_in_key",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "stock_out_key",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adjustment_key",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "first_event_key",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "second_event_key",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "temporary_farm_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "temporary_item_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "temporary_expense_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "temporary_harvest_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "temporary_loss_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Register and authenticate",
+      "item": [
+        {
+          "name": "Register farmer and first farm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farmers/signup",
+            "description": "Register farmer and first farm. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"AgTrack Postman Farmer\",\n  \"phone_number\": \"{{farmer_phone}}\",\n  \"password\": \"{{farmer_password}}\",\n  \"farm\": {\n    \"name\": \"Bong Cocoa Farm\",\n    \"county\": \"Bong\",\n    \"farm_type\": \"Crops\",\n    \"community\": \"Gbarnga\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"farmer_phone\", \"+231\" + Date.now().toString().slice(-9));",
+                  "pm.collectionVariables.set(\"other_phone\", \"+231\" + (Date.now() + 1).toString().slice(-9));",
+                  "for (const name of [\"stock_in_key\", \"stock_out_key\", \"adjustment_key\", \"first_event_key\", \"second_event_key\"]) {",
+                  "  pm.collectionVariables.set(name, pm.variables.replaceIn(\"{{$guid}}\"));",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"user_id\", data.user.id);",
+                  "  pm.collectionVariables.set(\"farm_id\", data.farm.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login using phone",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/login/access-token",
+            "description": "Login using phone. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{farmer_phone}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{farmer_password}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"access_token\", data.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get my profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/users/me",
+            "description": "Get my profile. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update my name",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farmers/me",
+            "description": "Update my name. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"AgTrack Postman Farmer Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Validate token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/login/test-token",
+            "description": "Validate token. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Farms",
+      "item": [
+        {
+          "name": "List my farms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farms/?skip=0&limit=20",
+            "description": "List my farms. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get specific farm",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farms/{{farm_id}}",
+            "description": "Get specific farm. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update farm community",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farms/{{farm_id}}",
+            "description": "Update farm community. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"community\": \"Gbarnga Central\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Inventory and stock logs",
+      "item": [
+        {
+          "name": "Create rice seed inventory",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/items/",
+            "description": "Create rice seed inventory. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"title\": \"Rice seeds\",\n  \"description\": \"Seeds for next planting season\",\n  \"category\": \"Seeds\",\n  \"unit\": \"kg\",\n  \"reorder_level\": \"5.0000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"item_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Stock IN 25 kg",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/inventory-transactions",
+            "description": "Stock IN 25 kg. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_id\": \"{{item_id}}\",\n  \"transaction_type\": \"IN\",\n  \"quantity\": \"25.0000\",\n  \"transaction_date\": \"2026-11-21T08:00:00Z\",\n  \"notes\": \"Opening stock for Postman test\",\n  \"idempotency_key\": \"{{stock_in_key}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"transaction_id\", data.id);",
+                  "}",
+                  "pm.test(\"Balance is 25\", function () { pm.expect(Number(pm.response.json().balance_after)).to.eql(25); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Retry the same stock IN without duplication",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/inventory-transactions",
+            "description": "Retry the same stock IN without duplication. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_id\": \"{{item_id}}\",\n  \"transaction_type\": \"IN\",\n  \"quantity\": \"25.0000\",\n  \"transaction_date\": \"2026-11-21T08:00:00Z\",\n  \"notes\": \"Opening stock for Postman test\",\n  \"idempotency_key\": \"{{stock_in_key}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Same movement returned\", function () { pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get(\"transaction_id\")); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Stock OUT 5 kg",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/inventory-transactions",
+            "description": "Stock OUT 5 kg. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_id\": \"{{item_id}}\",\n  \"transaction_type\": \"OUT\",\n  \"quantity\": \"5.0000\",\n  \"transaction_date\": \"2026-11-21T09:00:00Z\",\n  \"notes\": \"Seeds used for planting\",\n  \"idempotency_key\": \"{{stock_out_key}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Balance is 20\", function () { pm.expect(Number(pm.response.json().balance_after)).to.eql(20); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Adjust target stock to 18.5 kg",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/inventory-transactions",
+            "description": "Adjust target stock to 18.5 kg. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_id\": \"{{item_id}}\",\n  \"transaction_type\": \"ADJUSTMENT\",\n  \"quantity\": \"18.5000\",\n  \"transaction_date\": \"2026-11-21T10:00:00Z\",\n  \"notes\": \"Physical count correction\",\n  \"idempotency_key\": \"{{adjustment_key}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Target balance is 18.5\", function () { pm.expect(Number(pm.response.json().balance_after)).to.eql(18.5); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get specific inventory item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/items/{{item_id}}",
+            "description": "Get specific inventory item. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update item metadata",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/items/{{item_id}}",
+            "description": "Update item metadata. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Verified physical count\",\n  \"reorder_level\": \"8.0000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List farm inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/items/?farm_id={{farm_id}}&skip=0&limit=20",
+            "description": "List farm inventory. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get specific inventory log by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/inventory-transactions/{{transaction_id}}",
+            "description": "Get specific inventory log by ID. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get all logs for this item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/inventory-transactions?item_id={{item_id}}&start_date=2026-11-21&end_date=2026-11-21&skip=0&limit=20",
+            "description": "Get all logs for this item. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Three unique movements\", function () { pm.expect(pm.response.json().count).to.eql(3); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get only OUT logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/inventory-transactions?item_id={{item_id}}&transaction_type=OUT&start_date=2026-11-21&end_date=2026-11-21",
+            "description": "Get only OUT logs. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Farm expenses",
+      "item": [
+        {
+          "name": "Create LRD expense",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-expenses",
+            "description": "Create LRD expense. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"category\": \"Labor\",\n  \"description\": \"Land preparation\",\n  \"amount\": \"1500.00\",\n  \"currency\": \"LRD\",\n  \"expense_date\": \"2026-11-21\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"expense_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create USD expense",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-expenses",
+            "description": "Create USD expense. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"category\": \"Transportation\",\n  \"description\": \"Transporting produce\",\n  \"amount\": \"25.00\",\n  \"currency\": \"USD\",\n  \"expense_date\": \"2026-11-21\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get specific expense",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farm-expenses/{{expense_id}}",
+            "description": "Get specific expense. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update expense description",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-expenses/{{expense_id}}",
+            "description": "Update expense description. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Land preparation completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List LRD expenses in November",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farm-expenses?farm_id={{farm_id}}&currency=LRD&start_date=2026-11-01&end_date=2026-11-30&skip=0&limit=20",
+            "description": "List LRD expenses in November. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 - Harvests",
+      "item": [
+        {
+          "name": "Record cocoa harvest in kg",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/harvests",
+            "description": "Record cocoa harvest in kg. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"crop_name\": \"Cocoa\",\n  \"quantity\": \"250.0000\",\n  \"unit\": \"kg\",\n  \"harvest_date\": \"2026-11-21\",\n  \"notes\": \"Morning harvest\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"harvest_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Record cocoa harvest in bags",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/harvests",
+            "description": "Record cocoa harvest in bags. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"crop_name\": \"Cocoa\",\n  \"quantity\": \"2.0000\",\n  \"unit\": \"bags\",\n  \"harvest_date\": \"2026-11-21\",\n  \"notes\": \"Separate measurement unit\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get specific harvest",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/harvests/{{harvest_id}}",
+            "description": "Get specific harvest. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update harvest notes",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/harvests/{{harvest_id}}",
+            "description": "Update harvest notes. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Sorted and weighed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List cocoa harvests in November",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/harvests?farm_id={{farm_id}}&crop_name=Cocoa&start_date=2026-11-01&end_date=2026-11-30&skip=0&limit=20",
+            "description": "List cocoa harvests in November. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 - Traceability event logs",
+      "item": [
+        {
+          "name": "Create first batch event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/traceability",
+            "description": "Create first batch event. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"harvest_id\": \"{{harvest_id}}\",\n  \"origin\": \"Bong Cocoa Farm, Gbarnga\",\n  \"destination\": \"Farm storage\",\n  \"status\": \"HARVESTED\",\n  \"recorded_at\": \"2026-11-21T11:00:00Z\",\n  \"event_key\": \"{{first_event_key}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"traceability_id\", data.id);",
+                  "  pm.collectionVariables.set(\"batch_code\", data.batch_code);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Append storage event to batch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/traceability",
+            "description": "Append storage event to batch. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"harvest_id\": \"{{harvest_id}}\",\n  \"batch_code\": \"{{batch_code}}\",\n  \"origin\": \"Bong Cocoa Farm, Gbarnga\",\n  \"destination\": \"Gbarnga warehouse\",\n  \"status\": \"STORED\",\n  \"recorded_at\": \"2026-11-21T12:00:00Z\",\n  \"event_key\": \"{{second_event_key}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get specific traceability event",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/traceability/{{traceability_id}}",
+            "description": "Get specific traceability event. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get chronological batch history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/traceability/batches/{{batch_code}}?skip=0&limit=20",
+            "description": "Get chronological batch history. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Two batch events\", function () { pm.expect(pm.response.json().count).to.eql(2); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List harvest traceability logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/traceability?harvest_id={{harvest_id}}&start_date=2026-11-21&end_date=2026-11-21",
+            "description": "List harvest traceability logs. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 - Loss records",
+      "item": [
+        {
+          "name": "Record linked harvest loss",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/loss-records",
+            "description": "Record linked harvest loss. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"harvest_id\": \"{{harvest_id}}\",\n  \"loss_type\": \"Spoilage\",\n  \"quantity\": \"10.0000\",\n  \"unit\": \"kg\",\n  \"reason\": \"Damaged during storage\",\n  \"recorded_at\": \"2026-11-21T13:00:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"loss_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get specific loss",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/loss-records/{{loss_id}}",
+            "description": "Get specific loss. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update loss reason",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/loss-records/{{loss_id}}",
+            "description": "Update loss reason. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Storage spoilage confirmed during inspection\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List losses for specific harvest",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/loss-records?farm_id={{farm_id}}&harvest_id={{harvest_id}}&loss_type=Spoilage&start_date=2026-11-01&end_date=2026-11-30",
+            "description": "List losses for specific harvest. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08 - Reports and overview",
+      "item": [
+        {
+          "name": "Generate FARM_SUMMARY snapshot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-reports/generate",
+            "description": "Generate FARM_SUMMARY snapshot. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"report_type\": \"FARM_SUMMARY\",\n  \"period_start\": \"2026-11-01\",\n  \"period_end\": \"2026-11-30\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"report_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Generate INVENTORY snapshot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-reports/generate",
+            "description": "Generate INVENTORY snapshot. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"report_type\": \"INVENTORY\",\n  \"period_start\": \"2026-11-01\",\n  \"period_end\": \"2026-11-30\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Generate EXPENSE snapshot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-reports/generate",
+            "description": "Generate EXPENSE snapshot. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"report_type\": \"EXPENSE\",\n  \"period_start\": \"2026-11-01\",\n  \"period_end\": \"2026-11-30\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Generate HARVEST snapshot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-reports/generate",
+            "description": "Generate HARVEST snapshot. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"report_type\": \"HARVEST\",\n  \"period_start\": \"2026-11-01\",\n  \"period_end\": \"2026-11-30\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Generate LOSS snapshot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-reports/generate",
+            "description": "Generate LOSS snapshot. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"report_type\": \"LOSS\",\n  \"period_start\": \"2026-11-01\",\n  \"period_end\": \"2026-11-30\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Generate TRACEABILITY snapshot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-reports/generate",
+            "description": "Generate TRACEABILITY snapshot. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"report_type\": \"TRACEABILITY\",\n  \"period_start\": \"2026-11-01\",\n  \"period_end\": \"2026-11-30\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get specific saved summary report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farm-reports/{{report_id}}",
+            "description": "Get specific saved summary report. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List saved farm reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farm-reports?farm_id={{farm_id}}&skip=0&limit=20",
+            "description": "List saved farm reports. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get farm overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farms/{{farm_id}}/overview?recent_limit=5",
+            "description": "Get farm overview. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Currency totals stay separate\", function () { pm.expect(pm.response.json().expenses).to.have.lengthOf(2); });",
+                  "pm.test(\"Harvest units stay separate\", function () { pm.expect(pm.response.json().harvests).to.have.lengthOf(2); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "09 - Expected validation and history protection failures",
+      "item": [
+        {
+          "name": "Unauthenticated request is rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farms/",
+            "description": "Unauthenticated request is rejected. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cannot directly edit stock balance",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/items/{{item_id}}",
+            "description": "Cannot directly edit stock balance. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": \"999.0000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Insufficient stock is rejected",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/inventory-transactions",
+            "description": "Insufficient stock is rejected. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_id\": \"{{item_id}}\",\n  \"transaction_type\": \"OUT\",\n  \"quantity\": \"999.0000\",\n  \"idempotency_key\": \"{{$guid}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Zero expense is rejected",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-expenses",
+            "description": "Zero expense is rejected. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"category\": \"Labor\",\n  \"amount\": \"0\",\n  \"currency\": \"LRD\",\n  \"expense_date\": \"2026-11-21\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid currency is rejected",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-expenses",
+            "description": "Invalid currency is rejected. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"category\": \"Labor\",\n  \"amount\": \"5\",\n  \"currency\": \"EUR\",\n  \"expense_date\": \"2026-11-21\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid report period is rejected",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-reports/generate",
+            "description": "Invalid report period is rejected. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{farm_id}}\",\n  \"report_type\": \"EXPENSE\",\n  \"period_start\": \"2026-11-30\",\n  \"period_end\": \"2026-11-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Item with ledger history cannot be deleted",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/items/{{item_id}}",
+            "description": "Item with ledger history cannot be deleted. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Harvest with history cannot be deleted",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/harvests/{{harvest_id}}",
+            "description": "Harvest with history cannot be deleted. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Farm with business records cannot be deleted",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/farms/{{farm_id}}",
+            "description": "Farm with business records cannot be deleted. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10 - Cross-user security tests",
+      "item": [
+        {
+          "name": "Register another farmer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farmers/signup",
+            "description": "Register another farmer. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Second Postman Farmer\",\n  \"phone_number\": \"{{other_phone}}\",\n  \"password\": \"{{farmer_password}}\",\n  \"farm\": {\n    \"name\": \"Lofa Farm\",\n    \"county\": \"Lofa\",\n    \"farm_type\": \"Crops\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login second farmer",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/login/access-token",
+            "description": "Login second farmer. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{other_phone}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{farmer_password}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"other_access_token\", data.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Second farmer cannot read original farm",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farms/{{farm_id}}",
+            "description": "Second farmer cannot read original farm. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{other_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Second farmer cannot read original harvest",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/harvests/{{harvest_id}}",
+            "description": "Second farmer cannot read original harvest. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{other_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Second farmer cannot read original report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/farm-reports/{{report_id}}",
+            "description": "Second farmer cannot read original report. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{other_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Second farmer cannot read original batch history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/traceability/batches/{{batch_code}}",
+            "description": "Second farmer cannot read original batch history. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{other_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Second farmer cannot read original item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/items/{{item_id}}",
+            "description": "Second farmer cannot read original item. Run requests in collection order. All IDs are saved from actual responses.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{other_access_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "11 - Delete disposable test records",
+      "item": [
+        {
+          "name": "Create empty disposable farm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farms/",
+            "description": "Create empty disposable farm. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Disposable Test Farm\",\n  \"county\": \"Bong\",\n  \"farm_type\": \"Crops\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"temporary_farm_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create disposable item without ledger",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/items/",
+            "description": "Create disposable item without ledger. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Disposable Tool\",\n  \"farm_id\": \"{{temporary_farm_id}}\",\n  \"unit\": \"piece\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"temporary_item_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete disposable item",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/items/{{temporary_item_id}}",
+            "description": "Delete disposable item. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create disposable expense",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/farm-expenses",
+            "description": "Create disposable expense. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{temporary_farm_id}}\",\n  \"category\": \"Other\",\n  \"amount\": \"1.00\",\n  \"currency\": \"LRD\",\n  \"expense_date\": \"2026-11-21\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"temporary_expense_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete disposable expense",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/farm-expenses/{{temporary_expense_id}}",
+            "description": "Delete disposable expense. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create disposable harvest",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/harvests",
+            "description": "Create disposable harvest. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{temporary_farm_id}}\",\n  \"crop_name\": \"Rice\",\n  \"quantity\": \"1\",\n  \"unit\": \"kg\",\n  \"harvest_date\": \"2026-11-21\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"temporary_harvest_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create disposable loss",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/loss-records",
+            "description": "Create disposable loss. Run requests in collection order. All IDs are saved from actual responses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farm_id\": \"{{temporary_farm_id}}\",\n  \"loss_type\": \"Other\",\n  \"quantity\": \"1\",\n  \"unit\": \"kg\",\n  \"recorded_at\": \"2026-11-21T13:00:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set(\"temporary_loss_id\", data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete disposable loss",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/loss-records/{{temporary_loss_id}}",
+            "description": "Delete disposable loss. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete disposable harvest",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/harvests/{{temporary_harvest_id}}",
+            "description": "Delete disposable harvest. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete empty disposable farm",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/farms/{{temporary_farm_id}}",
+            "description": "Delete empty disposable farm. Run requests in collection order. All IDs are saved from actual responses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

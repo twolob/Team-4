@@ -1,0 +1,2170 @@
+{
+  "executed_at": "2026-11-21T00:57:58.506074+00:00",
+  "execution": "Python TestClient replay of all collection requests with equivalent variable substitutions and assertions. Postman JavaScript runtime was not used.",
+  "database": "Temporary isolated SQLite database, deleted after validation. Local agtrack.db was not modified.",
+  "passed": 73,
+  "failed": 0,
+  "requests": [
+    {
+      "name": "Register farmer and first farm",
+      "method": "POST",
+      "path": "/api/v1/farmers/signup",
+      "request_body": {
+        "full_name": "AgTrack Postman Farmer",
+        "phone_number": "+231535118714",
+        "password": "[REDACTED]",
+        "farm": {
+          "name": "Bong Cocoa Farm",
+          "county": "Bong",
+          "farm_type": "Crops",
+          "community": "Gbarnga"
+        }
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "user": {
+          "email": null,
+          "phone_number": "+231535118714",
+          "is_active": true,
+          "is_superuser": false,
+          "full_name": "AgTrack Postman Farmer",
+          "id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+          "created_at": "2026-11-21T00:57:57.600894Z"
+        },
+        "farm": {
+          "name": "Bong Cocoa Farm",
+          "county": "Bong",
+          "farm_type": "Crops",
+          "community": "Gbarnga",
+          "id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+          "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+          "created_at": "2026-11-21T00:57:57.601260Z"
+        }
+      }
+    },
+    {
+      "name": "Login using phone",
+      "method": "POST",
+      "path": "/api/v1/login/access-token",
+      "request_body": {
+        "username": "+231535118714",
+        "password": "[REDACTED]"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "access_token": "[REDACTED]",
+        "token_type": "bearer"
+      }
+    },
+    {
+      "name": "Get my profile",
+      "method": "GET",
+      "path": "/api/v1/users/me",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "email": null,
+        "phone_number": "+231535118714",
+        "is_active": true,
+        "is_superuser": false,
+        "full_name": "AgTrack Postman Farmer",
+        "id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:57.600894Z"
+      }
+    },
+    {
+      "name": "Update my name",
+      "method": "PATCH",
+      "path": "/api/v1/farmers/me",
+      "request_body": {
+        "full_name": "AgTrack Postman Farmer Updated"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "email": null,
+        "phone_number": "+231535118714",
+        "is_active": true,
+        "is_superuser": false,
+        "full_name": "AgTrack Postman Farmer Updated",
+        "id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:57.600894Z"
+      }
+    },
+    {
+      "name": "Validate token",
+      "method": "POST",
+      "path": "/api/v1/login/test-token",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "email": null,
+        "phone_number": "+231535118714",
+        "is_active": true,
+        "is_superuser": false,
+        "full_name": "AgTrack Postman Farmer Updated",
+        "id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:57.600894Z"
+      }
+    },
+    {
+      "name": "List my farms",
+      "method": "GET",
+      "path": "/api/v1/farms/?skip=0&limit=20",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": [
+        {
+          "name": "Bong Cocoa Farm",
+          "county": "Bong",
+          "farm_type": "Crops",
+          "community": "Gbarnga",
+          "id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+          "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+          "created_at": "2026-11-21T00:57:57.601260Z"
+        }
+      ]
+    },
+    {
+      "name": "Get specific farm",
+      "method": "GET",
+      "path": "/api/v1/farms/bb32844b-3e2d-4c76-adf4-26a308524bbe",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "name": "Bong Cocoa Farm",
+        "county": "Bong",
+        "farm_type": "Crops",
+        "community": "Gbarnga",
+        "id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:57.601260Z"
+      }
+    },
+    {
+      "name": "Update farm community",
+      "method": "PATCH",
+      "path": "/api/v1/farms/bb32844b-3e2d-4c76-adf4-26a308524bbe",
+      "request_body": {
+        "community": "Gbarnga Central"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "name": "Bong Cocoa Farm",
+        "county": "Bong",
+        "farm_type": "Crops",
+        "community": "Gbarnga Central",
+        "id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:57.601260Z"
+      }
+    },
+    {
+      "name": "Create rice seed inventory",
+      "method": "POST",
+      "path": "/api/v1/items/",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "title": "Rice seeds",
+        "description": "Seeds for next planting season",
+        "category": "Seeds",
+        "unit": "kg",
+        "reorder_level": "5.0000"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "category": "Seeds",
+        "unit": "kg",
+        "reorder_level": "5.0000",
+        "title": "Rice seeds",
+        "description": "Seeds for next planting season",
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "quantity": "0.0000",
+        "updated_at": "2026-11-21T00:57:57.756250Z",
+        "id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:57.756272Z"
+      }
+    },
+    {
+      "name": "Stock IN 25 kg",
+      "method": "POST",
+      "path": "/api/v1/inventory-transactions",
+      "request_body": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "IN",
+        "quantity": "25.0000",
+        "transaction_date": "2026-11-21T08:00:00Z",
+        "notes": "Opening stock for Postman test",
+        "idempotency_key": "e44c4a17-10d7-4462-94e6-0584d8ad3b81"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "IN",
+        "quantity": "25.0000",
+        "transaction_date": "2026-11-21T08:00:00Z",
+        "notes": "Opening stock for Postman test",
+        "idempotency_key": "e44c4a17-10d7-4462-94e6-0584d8ad3b81",
+        "id": "3e5d5117-d74e-4667-a1bf-615629ccf2b8",
+        "balance_after": "25.0000",
+        "created_at": "2026-11-21T00:57:57.776539Z"
+      }
+    },
+    {
+      "name": "Retry the same stock IN without duplication",
+      "method": "POST",
+      "path": "/api/v1/inventory-transactions",
+      "request_body": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "IN",
+        "quantity": "25.0000",
+        "transaction_date": "2026-11-21T08:00:00Z",
+        "notes": "Opening stock for Postman test",
+        "idempotency_key": "e44c4a17-10d7-4462-94e6-0584d8ad3b81"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "IN",
+        "quantity": "25.0000",
+        "transaction_date": "2026-11-21T08:00:00Z",
+        "notes": "Opening stock for Postman test",
+        "idempotency_key": "e44c4a17-10d7-4462-94e6-0584d8ad3b81",
+        "id": "3e5d5117-d74e-4667-a1bf-615629ccf2b8",
+        "balance_after": "25.0000",
+        "created_at": "2026-11-21T00:57:57.776539Z"
+      }
+    },
+    {
+      "name": "Stock OUT 5 kg",
+      "method": "POST",
+      "path": "/api/v1/inventory-transactions",
+      "request_body": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "OUT",
+        "quantity": "5.0000",
+        "transaction_date": "2026-11-21T09:00:00Z",
+        "notes": "Seeds used for planting",
+        "idempotency_key": "3a5393af-739b-44b9-9ef0-884a28acbd42"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "OUT",
+        "quantity": "5.0000",
+        "transaction_date": "2026-11-21T09:00:00Z",
+        "notes": "Seeds used for planting",
+        "idempotency_key": "3a5393af-739b-44b9-9ef0-884a28acbd42",
+        "id": "f2786fbd-9190-40a7-99c5-510b5ea50622",
+        "balance_after": "20.0000",
+        "created_at": "2026-11-21T00:57:57.799046Z"
+      }
+    },
+    {
+      "name": "Adjust target stock to 18.5 kg",
+      "method": "POST",
+      "path": "/api/v1/inventory-transactions",
+      "request_body": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "ADJUSTMENT",
+        "quantity": "18.5000",
+        "transaction_date": "2026-11-21T10:00:00Z",
+        "notes": "Physical count correction",
+        "idempotency_key": "2f359e7f-8ca0-455b-a7c5-625fb6521b34"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "ADJUSTMENT",
+        "quantity": "18.5000",
+        "transaction_date": "2026-11-21T10:00:00Z",
+        "notes": "Physical count correction",
+        "idempotency_key": "2f359e7f-8ca0-455b-a7c5-625fb6521b34",
+        "id": "bc63ba05-988d-45dd-9404-4f18d94e35bc",
+        "balance_after": "18.5000",
+        "created_at": "2026-11-21T00:57:57.812677Z"
+      }
+    },
+    {
+      "name": "Get specific inventory item",
+      "method": "GET",
+      "path": "/api/v1/items/ff5581f1-eac7-4761-9662-6bebb1106029",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "category": "Seeds",
+        "unit": "kg",
+        "reorder_level": "5.0000",
+        "title": "Rice seeds",
+        "description": "Seeds for next planting season",
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "quantity": "18.5000",
+        "updated_at": "2026-11-21T00:57:57.810875Z",
+        "id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:57.756272Z"
+      }
+    },
+    {
+      "name": "Update item metadata",
+      "method": "PATCH",
+      "path": "/api/v1/items/ff5581f1-eac7-4761-9662-6bebb1106029",
+      "request_body": {
+        "description": "Verified physical count",
+        "reorder_level": "8.0000"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "category": "Seeds",
+        "unit": "kg",
+        "reorder_level": "8.0000",
+        "title": "Rice seeds",
+        "description": "Verified physical count",
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "quantity": "18.5000",
+        "updated_at": "2026-11-21T00:57:57.831005Z",
+        "id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:57.756272Z"
+      }
+    },
+    {
+      "name": "List farm inventory",
+      "method": "GET",
+      "path": "/api/v1/items/?farm_id=bb32844b-3e2d-4c76-adf4-26a308524bbe&skip=0&limit=20",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "data": [
+          {
+            "category": "Seeds",
+            "unit": "kg",
+            "reorder_level": "8.0000",
+            "title": "Rice seeds",
+            "description": "Verified physical count",
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "quantity": "18.5000",
+            "updated_at": "2026-11-21T00:57:57.831005Z",
+            "id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+            "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+            "created_at": "2026-11-21T00:57:57.756272Z"
+          }
+        ],
+        "count": 1
+      }
+    },
+    {
+      "name": "Get specific inventory log by ID",
+      "method": "GET",
+      "path": "/api/v1/inventory-transactions/3e5d5117-d74e-4667-a1bf-615629ccf2b8",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "IN",
+        "quantity": "25.0000",
+        "transaction_date": "2026-11-21T08:00:00Z",
+        "notes": "Opening stock for Postman test",
+        "idempotency_key": "e44c4a17-10d7-4462-94e6-0584d8ad3b81",
+        "id": "3e5d5117-d74e-4667-a1bf-615629ccf2b8",
+        "balance_after": "25.0000",
+        "created_at": "2026-11-21T00:57:57.776539Z"
+      }
+    },
+    {
+      "name": "Get all logs for this item",
+      "method": "GET",
+      "path": "/api/v1/inventory-transactions?item_id=ff5581f1-eac7-4761-9662-6bebb1106029&start_date=2026-11-21&end_date=2026-11-21&skip=0&limit=20",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "data": [
+          {
+            "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+            "transaction_type": "ADJUSTMENT",
+            "quantity": "18.5000",
+            "transaction_date": "2026-11-21T10:00:00Z",
+            "notes": "Physical count correction",
+            "idempotency_key": "2f359e7f-8ca0-455b-a7c5-625fb6521b34",
+            "id": "bc63ba05-988d-45dd-9404-4f18d94e35bc",
+            "balance_after": "18.5000",
+            "created_at": "2026-11-21T00:57:57.812677Z"
+          },
+          {
+            "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+            "transaction_type": "OUT",
+            "quantity": "5.0000",
+            "transaction_date": "2026-11-21T09:00:00Z",
+            "notes": "Seeds used for planting",
+            "idempotency_key": "3a5393af-739b-44b9-9ef0-884a28acbd42",
+            "id": "f2786fbd-9190-40a7-99c5-510b5ea50622",
+            "balance_after": "20.0000",
+            "created_at": "2026-11-21T00:57:57.799046Z"
+          },
+          {
+            "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+            "transaction_type": "IN",
+            "quantity": "25.0000",
+            "transaction_date": "2026-11-21T08:00:00Z",
+            "notes": "Opening stock for Postman test",
+            "idempotency_key": "e44c4a17-10d7-4462-94e6-0584d8ad3b81",
+            "id": "3e5d5117-d74e-4667-a1bf-615629ccf2b8",
+            "balance_after": "25.0000",
+            "created_at": "2026-11-21T00:57:57.776539Z"
+          }
+        ],
+        "count": 3
+      }
+    },
+    {
+      "name": "Get only OUT logs",
+      "method": "GET",
+      "path": "/api/v1/inventory-transactions?item_id=ff5581f1-eac7-4761-9662-6bebb1106029&transaction_type=OUT&start_date=2026-11-21&end_date=2026-11-21",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "data": [
+          {
+            "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+            "transaction_type": "OUT",
+            "quantity": "5.0000",
+            "transaction_date": "2026-11-21T09:00:00Z",
+            "notes": "Seeds used for planting",
+            "idempotency_key": "3a5393af-739b-44b9-9ef0-884a28acbd42",
+            "id": "f2786fbd-9190-40a7-99c5-510b5ea50622",
+            "balance_after": "20.0000",
+            "created_at": "2026-11-21T00:57:57.799046Z"
+          }
+        ],
+        "count": 1
+      }
+    },
+    {
+      "name": "Create LRD expense",
+      "method": "POST",
+      "path": "/api/v1/farm-expenses",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "category": "Labor",
+        "description": "Land preparation",
+        "amount": "1500.00",
+        "currency": "LRD",
+        "expense_date": "2026-11-21"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "category": "Labor",
+        "description": "Land preparation",
+        "amount": "1500.00",
+        "currency": "LRD",
+        "expense_date": "2026-11-21",
+        "id": "b74f50f8-ea86-49d7-830c-57e78e2b265e",
+        "created_at": "2026-11-21T00:57:57.873840Z"
+      }
+    },
+    {
+      "name": "Create USD expense",
+      "method": "POST",
+      "path": "/api/v1/farm-expenses",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "category": "Transportation",
+        "description": "Transporting produce",
+        "amount": "25.00",
+        "currency": "USD",
+        "expense_date": "2026-11-21"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "category": "Transportation",
+        "description": "Transporting produce",
+        "amount": "25.00",
+        "currency": "USD",
+        "expense_date": "2026-11-21",
+        "id": "78221cda-aed1-4f09-8380-c2066f32b165",
+        "created_at": "2026-11-21T00:57:57.887213Z"
+      }
+    },
+    {
+      "name": "Get specific expense",
+      "method": "GET",
+      "path": "/api/v1/farm-expenses/b74f50f8-ea86-49d7-830c-57e78e2b265e",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "category": "Labor",
+        "description": "Land preparation",
+        "amount": "1500.00",
+        "currency": "LRD",
+        "expense_date": "2026-11-21",
+        "id": "b74f50f8-ea86-49d7-830c-57e78e2b265e",
+        "created_at": "2026-11-21T00:57:57.873840Z"
+      }
+    },
+    {
+      "name": "Update expense description",
+      "method": "PATCH",
+      "path": "/api/v1/farm-expenses/b74f50f8-ea86-49d7-830c-57e78e2b265e",
+      "request_body": {
+        "description": "Land preparation completed"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "category": "Labor",
+        "description": "Land preparation completed",
+        "amount": "1500.00",
+        "currency": "LRD",
+        "expense_date": "2026-11-21",
+        "id": "b74f50f8-ea86-49d7-830c-57e78e2b265e",
+        "created_at": "2026-11-21T00:57:57.873840Z"
+      }
+    },
+    {
+      "name": "List LRD expenses in November",
+      "method": "GET",
+      "path": "/api/v1/farm-expenses?farm_id=bb32844b-3e2d-4c76-adf4-26a308524bbe&currency=LRD&start_date=2026-11-01&end_date=2026-11-30&skip=0&limit=20",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "data": [
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "category": "Labor",
+            "description": "Land preparation completed",
+            "amount": "1500.00",
+            "currency": "LRD",
+            "expense_date": "2026-11-21",
+            "id": "b74f50f8-ea86-49d7-830c-57e78e2b265e",
+            "created_at": "2026-11-21T00:57:57.873840Z"
+          }
+        ],
+        "count": 1
+      }
+    },
+    {
+      "name": "Record cocoa harvest in kg",
+      "method": "POST",
+      "path": "/api/v1/harvests",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "crop_name": "Cocoa",
+        "quantity": "250.0000",
+        "unit": "kg",
+        "harvest_date": "2026-11-21",
+        "notes": "Morning harvest"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "crop_name": "Cocoa",
+        "quantity": "250.0000",
+        "unit": "kg",
+        "harvest_date": "2026-11-21",
+        "notes": "Morning harvest",
+        "id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "created_at": "2026-11-21T00:57:57.931618Z"
+      }
+    },
+    {
+      "name": "Record cocoa harvest in bags",
+      "method": "POST",
+      "path": "/api/v1/harvests",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "crop_name": "Cocoa",
+        "quantity": "2.0000",
+        "unit": "bags",
+        "harvest_date": "2026-11-21",
+        "notes": "Separate measurement unit"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "crop_name": "Cocoa",
+        "quantity": "2.0000",
+        "unit": "bags",
+        "harvest_date": "2026-11-21",
+        "notes": "Separate measurement unit",
+        "id": "5db9410f-ad8d-429c-99c7-349eec678887",
+        "created_at": "2026-11-21T00:57:57.946586Z"
+      }
+    },
+    {
+      "name": "Get specific harvest",
+      "method": "GET",
+      "path": "/api/v1/harvests/ab28d614-8f72-435b-bf9f-db17d502caa1",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "crop_name": "Cocoa",
+        "quantity": "250.0000",
+        "unit": "kg",
+        "harvest_date": "2026-11-21",
+        "notes": "Morning harvest",
+        "id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "created_at": "2026-11-21T00:57:57.931618Z"
+      }
+    },
+    {
+      "name": "Update harvest notes",
+      "method": "PATCH",
+      "path": "/api/v1/harvests/ab28d614-8f72-435b-bf9f-db17d502caa1",
+      "request_body": {
+        "notes": "Sorted and weighed"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "crop_name": "Cocoa",
+        "quantity": "250.0000",
+        "unit": "kg",
+        "harvest_date": "2026-11-21",
+        "notes": "Sorted and weighed",
+        "id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "created_at": "2026-11-21T00:57:57.931618Z"
+      }
+    },
+    {
+      "name": "List cocoa harvests in November",
+      "method": "GET",
+      "path": "/api/v1/harvests?farm_id=bb32844b-3e2d-4c76-adf4-26a308524bbe&crop_name=Cocoa&start_date=2026-11-01&end_date=2026-11-30&skip=0&limit=20",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "data": [
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "crop_name": "Cocoa",
+            "quantity": "2.0000",
+            "unit": "bags",
+            "harvest_date": "2026-11-21",
+            "notes": "Separate measurement unit",
+            "id": "5db9410f-ad8d-429c-99c7-349eec678887",
+            "created_at": "2026-11-21T00:57:57.946586Z"
+          },
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "crop_name": "Cocoa",
+            "quantity": "250.0000",
+            "unit": "kg",
+            "harvest_date": "2026-11-21",
+            "notes": "Sorted and weighed",
+            "id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+            "created_at": "2026-11-21T00:57:57.931618Z"
+          }
+        ],
+        "count": 2
+      }
+    },
+    {
+      "name": "Create first batch event",
+      "method": "POST",
+      "path": "/api/v1/traceability",
+      "request_body": {
+        "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "origin": "Bong Cocoa Farm, Gbarnga",
+        "destination": "Farm storage",
+        "status": "HARVESTED",
+        "recorded_at": "2026-11-21T11:00:00Z",
+        "event_key": "333895f7-b3fc-49fc-99c1-8019c71aaa92"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "origin": "Bong Cocoa Farm, Gbarnga",
+        "destination": "Farm storage",
+        "status": "HARVESTED",
+        "recorded_at": "2026-11-21T11:00:00Z",
+        "event_key": "333895f7-b3fc-49fc-99c1-8019c71aaa92",
+        "id": "6a8fa9eb-5609-4419-8735-277dcff67e3c",
+        "batch_code": "AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92"
+      }
+    },
+    {
+      "name": "Append storage event to batch",
+      "method": "POST",
+      "path": "/api/v1/traceability",
+      "request_body": {
+        "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "batch_code": "AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92",
+        "origin": "Bong Cocoa Farm, Gbarnga",
+        "destination": "Gbarnga warehouse",
+        "status": "STORED",
+        "recorded_at": "2026-11-21T12:00:00Z",
+        "event_key": "241a196b-8057-4eb9-bb3d-71f52e277a50"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "origin": "Bong Cocoa Farm, Gbarnga",
+        "destination": "Gbarnga warehouse",
+        "status": "STORED",
+        "recorded_at": "2026-11-21T12:00:00Z",
+        "event_key": "241a196b-8057-4eb9-bb3d-71f52e277a50",
+        "id": "be47bfac-e9f2-44a9-a991-d11d7200ecea",
+        "batch_code": "AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92"
+      }
+    },
+    {
+      "name": "Get specific traceability event",
+      "method": "GET",
+      "path": "/api/v1/traceability/6a8fa9eb-5609-4419-8735-277dcff67e3c",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "origin": "Bong Cocoa Farm, Gbarnga",
+        "destination": "Farm storage",
+        "status": "HARVESTED",
+        "recorded_at": "2026-11-21T11:00:00Z",
+        "event_key": "333895f7-b3fc-49fc-99c1-8019c71aaa92",
+        "id": "6a8fa9eb-5609-4419-8735-277dcff67e3c",
+        "batch_code": "AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92"
+      }
+    },
+    {
+      "name": "Get chronological batch history",
+      "method": "GET",
+      "path": "/api/v1/traceability/batches/AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92?skip=0&limit=20",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "data": [
+          {
+            "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+            "origin": "Bong Cocoa Farm, Gbarnga",
+            "destination": "Farm storage",
+            "status": "HARVESTED",
+            "recorded_at": "2026-11-21T11:00:00Z",
+            "event_key": "333895f7-b3fc-49fc-99c1-8019c71aaa92",
+            "id": "6a8fa9eb-5609-4419-8735-277dcff67e3c",
+            "batch_code": "AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92"
+          },
+          {
+            "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+            "origin": "Bong Cocoa Farm, Gbarnga",
+            "destination": "Gbarnga warehouse",
+            "status": "STORED",
+            "recorded_at": "2026-11-21T12:00:00Z",
+            "event_key": "241a196b-8057-4eb9-bb3d-71f52e277a50",
+            "id": "be47bfac-e9f2-44a9-a991-d11d7200ecea",
+            "batch_code": "AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92"
+          }
+        ],
+        "count": 2
+      }
+    },
+    {
+      "name": "List harvest traceability logs",
+      "method": "GET",
+      "path": "/api/v1/traceability?harvest_id=ab28d614-8f72-435b-bf9f-db17d502caa1&start_date=2026-11-21&end_date=2026-11-21",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "data": [
+          {
+            "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+            "origin": "Bong Cocoa Farm, Gbarnga",
+            "destination": "Farm storage",
+            "status": "HARVESTED",
+            "recorded_at": "2026-11-21T11:00:00Z",
+            "event_key": "333895f7-b3fc-49fc-99c1-8019c71aaa92",
+            "id": "6a8fa9eb-5609-4419-8735-277dcff67e3c",
+            "batch_code": "AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92"
+          },
+          {
+            "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+            "origin": "Bong Cocoa Farm, Gbarnga",
+            "destination": "Gbarnga warehouse",
+            "status": "STORED",
+            "recorded_at": "2026-11-21T12:00:00Z",
+            "event_key": "241a196b-8057-4eb9-bb3d-71f52e277a50",
+            "id": "be47bfac-e9f2-44a9-a991-d11d7200ecea",
+            "batch_code": "AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92"
+          }
+        ],
+        "count": 2
+      }
+    },
+    {
+      "name": "Record linked harvest loss",
+      "method": "POST",
+      "path": "/api/v1/loss-records",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "loss_type": "Spoilage",
+        "quantity": "10.0000",
+        "unit": "kg",
+        "reason": "Damaged during storage",
+        "recorded_at": "2026-11-21T13:00:00Z"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "loss_type": "Spoilage",
+        "quantity": "10.0000",
+        "unit": "kg",
+        "reason": "Damaged during storage",
+        "recorded_at": "2026-11-21T13:00:00Z",
+        "id": "bc587e91-e017-46df-9d07-55d8528e670b"
+      }
+    },
+    {
+      "name": "Get specific loss",
+      "method": "GET",
+      "path": "/api/v1/loss-records/bc587e91-e017-46df-9d07-55d8528e670b",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "loss_type": "Spoilage",
+        "quantity": "10.0000",
+        "unit": "kg",
+        "reason": "Damaged during storage",
+        "recorded_at": "2026-11-21T13:00:00Z",
+        "id": "bc587e91-e017-46df-9d07-55d8528e670b"
+      }
+    },
+    {
+      "name": "Update loss reason",
+      "method": "PATCH",
+      "path": "/api/v1/loss-records/bc587e91-e017-46df-9d07-55d8528e670b",
+      "request_body": {
+        "reason": "Storage spoilage confirmed during inspection"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+        "loss_type": "Spoilage",
+        "quantity": "10.0000",
+        "unit": "kg",
+        "reason": "Storage spoilage confirmed during inspection",
+        "recorded_at": "2026-11-21T13:00:00Z",
+        "id": "bc587e91-e017-46df-9d07-55d8528e670b"
+      }
+    },
+    {
+      "name": "List losses for specific harvest",
+      "method": "GET",
+      "path": "/api/v1/loss-records?farm_id=bb32844b-3e2d-4c76-adf4-26a308524bbe&harvest_id=ab28d614-8f72-435b-bf9f-db17d502caa1&loss_type=Spoilage&start_date=2026-11-01&end_date=2026-11-30",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "data": [
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "harvest_id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+            "loss_type": "Spoilage",
+            "quantity": "10.0000",
+            "unit": "kg",
+            "reason": "Storage spoilage confirmed during inspection",
+            "recorded_at": "2026-11-21T13:00:00Z",
+            "id": "bc587e91-e017-46df-9d07-55d8528e670b"
+          }
+        ],
+        "count": 1
+      }
+    },
+    {
+      "name": "Generate FARM_SUMMARY snapshot",
+      "method": "POST",
+      "path": "/api/v1/farm-reports/generate",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "FARM_SUMMARY",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "FARM_SUMMARY",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30",
+        "id": "f40ac188-54cf-459a-89b6-59f009d3f30b",
+        "report_data": {
+          "period_start": "2026-11-01",
+          "period_end": "2026-11-30",
+          "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+          "expenses": [
+            {
+              "currency": "LRD",
+              "amount": "1500.00"
+            },
+            {
+              "currency": "USD",
+              "amount": "25.00"
+            }
+          ],
+          "harvests": [
+            {
+              "crop_name": "Cocoa",
+              "unit": "bags",
+              "quantity": "2.0000"
+            },
+            {
+              "crop_name": "Cocoa",
+              "unit": "kg",
+              "quantity": "250.0000"
+            }
+          ],
+          "losses": [
+            {
+              "loss_type": "Spoilage",
+              "unit": "kg",
+              "crop_name": "Cocoa",
+              "quantity": "10.0000"
+            }
+          ],
+          "inventory": [
+            {
+              "unit": "kg",
+              "item_count": 1,
+              "quantity": "18.5000"
+            }
+          ],
+          "movements": [
+            {
+              "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+              "unit": "kg",
+              "type": "ADJUSTMENT",
+              "quantity": "18.5000",
+              "meaning": "sum of target balances"
+            },
+            {
+              "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+              "unit": "kg",
+              "type": "IN",
+              "quantity": "25.0000",
+              "meaning": "total moved"
+            },
+            {
+              "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+              "unit": "kg",
+              "type": "OUT",
+              "quantity": "5.0000",
+              "meaning": "total moved"
+            }
+          ],
+          "traceability": [
+            {
+              "status": "HARVESTED",
+              "event_count": 1
+            },
+            {
+              "status": "STORED",
+              "event_count": 1
+            }
+          ]
+        },
+        "generated_at": "2026-11-21T00:57:58.095422Z"
+      }
+    },
+    {
+      "name": "Generate INVENTORY snapshot",
+      "method": "POST",
+      "path": "/api/v1/farm-reports/generate",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "INVENTORY",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "INVENTORY",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30",
+        "id": "130b52a2-180d-49e3-a7d7-e4a946ddebce",
+        "report_data": {
+          "period_start": "2026-11-01",
+          "period_end": "2026-11-30",
+          "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+          "inventory": [
+            {
+              "unit": "kg",
+              "item_count": 1,
+              "quantity": "18.5000"
+            }
+          ],
+          "movements": [
+            {
+              "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+              "unit": "kg",
+              "type": "ADJUSTMENT",
+              "quantity": "18.5000",
+              "meaning": "sum of target balances"
+            },
+            {
+              "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+              "unit": "kg",
+              "type": "IN",
+              "quantity": "25.0000",
+              "meaning": "total moved"
+            },
+            {
+              "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+              "unit": "kg",
+              "type": "OUT",
+              "quantity": "5.0000",
+              "meaning": "total moved"
+            }
+          ]
+        },
+        "generated_at": "2026-11-21T00:57:58.112352Z"
+      }
+    },
+    {
+      "name": "Generate EXPENSE snapshot",
+      "method": "POST",
+      "path": "/api/v1/farm-reports/generate",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "EXPENSE",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "EXPENSE",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30",
+        "id": "925678f5-d9c2-4e16-8265-0f3332a5f488",
+        "report_data": {
+          "period_start": "2026-11-01",
+          "period_end": "2026-11-30",
+          "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+          "expenses": [
+            {
+              "currency": "LRD",
+              "amount": "1500.00"
+            },
+            {
+              "currency": "USD",
+              "amount": "25.00"
+            }
+          ]
+        },
+        "generated_at": "2026-11-21T00:57:58.127676Z"
+      }
+    },
+    {
+      "name": "Generate HARVEST snapshot",
+      "method": "POST",
+      "path": "/api/v1/farm-reports/generate",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "HARVEST",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "HARVEST",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30",
+        "id": "112a1dd0-4b0c-4e4d-9bfa-1289ec7fa51f",
+        "report_data": {
+          "period_start": "2026-11-01",
+          "period_end": "2026-11-30",
+          "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+          "harvests": [
+            {
+              "crop_name": "Cocoa",
+              "unit": "bags",
+              "quantity": "2.0000"
+            },
+            {
+              "crop_name": "Cocoa",
+              "unit": "kg",
+              "quantity": "250.0000"
+            }
+          ]
+        },
+        "generated_at": "2026-11-21T00:57:58.143011Z"
+      }
+    },
+    {
+      "name": "Generate LOSS snapshot",
+      "method": "POST",
+      "path": "/api/v1/farm-reports/generate",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "LOSS",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "LOSS",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30",
+        "id": "c1ad9465-e9dc-43ab-b3c3-72940513359f",
+        "report_data": {
+          "period_start": "2026-11-01",
+          "period_end": "2026-11-30",
+          "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+          "losses": [
+            {
+              "loss_type": "Spoilage",
+              "unit": "kg",
+              "crop_name": "Cocoa",
+              "quantity": "10.0000"
+            }
+          ]
+        },
+        "generated_at": "2026-11-21T00:57:58.155944Z"
+      }
+    },
+    {
+      "name": "Generate TRACEABILITY snapshot",
+      "method": "POST",
+      "path": "/api/v1/farm-reports/generate",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "TRACEABILITY",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "TRACEABILITY",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30",
+        "id": "63d7ee00-7de6-418b-9b4d-e81383963e50",
+        "report_data": {
+          "period_start": "2026-11-01",
+          "period_end": "2026-11-30",
+          "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+          "traceability": [
+            {
+              "status": "HARVESTED",
+              "event_count": 1
+            },
+            {
+              "status": "STORED",
+              "event_count": 1
+            }
+          ]
+        },
+        "generated_at": "2026-11-21T00:57:58.168207Z"
+      }
+    },
+    {
+      "name": "Get specific saved summary report",
+      "method": "GET",
+      "path": "/api/v1/farm-reports/f40ac188-54cf-459a-89b6-59f009d3f30b",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "FARM_SUMMARY",
+        "period_start": "2026-11-01",
+        "period_end": "2026-11-30",
+        "id": "f40ac188-54cf-459a-89b6-59f009d3f30b",
+        "report_data": {
+          "period_start": "2026-11-01",
+          "period_end": "2026-11-30",
+          "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+          "expenses": [
+            {
+              "currency": "LRD",
+              "amount": "1500.00"
+            },
+            {
+              "currency": "USD",
+              "amount": "25.00"
+            }
+          ],
+          "harvests": [
+            {
+              "crop_name": "Cocoa",
+              "unit": "bags",
+              "quantity": "2.0000"
+            },
+            {
+              "crop_name": "Cocoa",
+              "unit": "kg",
+              "quantity": "250.0000"
+            }
+          ],
+          "losses": [
+            {
+              "loss_type": "Spoilage",
+              "unit": "kg",
+              "crop_name": "Cocoa",
+              "quantity": "10.0000"
+            }
+          ],
+          "inventory": [
+            {
+              "unit": "kg",
+              "item_count": 1,
+              "quantity": "18.5000"
+            }
+          ],
+          "movements": [
+            {
+              "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+              "unit": "kg",
+              "type": "ADJUSTMENT",
+              "quantity": "18.5000",
+              "meaning": "sum of target balances"
+            },
+            {
+              "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+              "unit": "kg",
+              "type": "IN",
+              "quantity": "25.0000",
+              "meaning": "total moved"
+            },
+            {
+              "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+              "unit": "kg",
+              "type": "OUT",
+              "quantity": "5.0000",
+              "meaning": "total moved"
+            }
+          ],
+          "traceability": [
+            {
+              "status": "HARVESTED",
+              "event_count": 1
+            },
+            {
+              "status": "STORED",
+              "event_count": 1
+            }
+          ]
+        },
+        "generated_at": "2026-11-21T00:57:58.095422Z"
+      }
+    },
+    {
+      "name": "List saved farm reports",
+      "method": "GET",
+      "path": "/api/v1/farm-reports?farm_id=bb32844b-3e2d-4c76-adf4-26a308524bbe&skip=0&limit=20",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "data": [
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "report_type": "TRACEABILITY",
+            "period_start": "2026-11-01",
+            "period_end": "2026-11-30",
+            "id": "63d7ee00-7de6-418b-9b4d-e81383963e50",
+            "report_data": {
+              "period_start": "2026-11-01",
+              "period_end": "2026-11-30",
+              "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+              "traceability": [
+                {
+                  "status": "HARVESTED",
+                  "event_count": 1
+                },
+                {
+                  "status": "STORED",
+                  "event_count": 1
+                }
+              ]
+            },
+            "generated_at": "2026-11-21T00:57:58.168207Z"
+          },
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "report_type": "LOSS",
+            "period_start": "2026-11-01",
+            "period_end": "2026-11-30",
+            "id": "c1ad9465-e9dc-43ab-b3c3-72940513359f",
+            "report_data": {
+              "period_start": "2026-11-01",
+              "period_end": "2026-11-30",
+              "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+              "losses": [
+                {
+                  "loss_type": "Spoilage",
+                  "unit": "kg",
+                  "crop_name": "Cocoa",
+                  "quantity": "10.0000"
+                }
+              ]
+            },
+            "generated_at": "2026-11-21T00:57:58.155944Z"
+          },
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "report_type": "HARVEST",
+            "period_start": "2026-11-01",
+            "period_end": "2026-11-30",
+            "id": "112a1dd0-4b0c-4e4d-9bfa-1289ec7fa51f",
+            "report_data": {
+              "period_start": "2026-11-01",
+              "period_end": "2026-11-30",
+              "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+              "harvests": [
+                {
+                  "crop_name": "Cocoa",
+                  "unit": "bags",
+                  "quantity": "2.0000"
+                },
+                {
+                  "crop_name": "Cocoa",
+                  "unit": "kg",
+                  "quantity": "250.0000"
+                }
+              ]
+            },
+            "generated_at": "2026-11-21T00:57:58.143011Z"
+          },
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "report_type": "EXPENSE",
+            "period_start": "2026-11-01",
+            "period_end": "2026-11-30",
+            "id": "925678f5-d9c2-4e16-8265-0f3332a5f488",
+            "report_data": {
+              "period_start": "2026-11-01",
+              "period_end": "2026-11-30",
+              "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+              "expenses": [
+                {
+                  "currency": "LRD",
+                  "amount": "1500.00"
+                },
+                {
+                  "currency": "USD",
+                  "amount": "25.00"
+                }
+              ]
+            },
+            "generated_at": "2026-11-21T00:57:58.127676Z"
+          },
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "report_type": "INVENTORY",
+            "period_start": "2026-11-01",
+            "period_end": "2026-11-30",
+            "id": "130b52a2-180d-49e3-a7d7-e4a946ddebce",
+            "report_data": {
+              "period_start": "2026-11-01",
+              "period_end": "2026-11-30",
+              "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+              "inventory": [
+                {
+                  "unit": "kg",
+                  "item_count": 1,
+                  "quantity": "18.5000"
+                }
+              ],
+              "movements": [
+                {
+                  "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+                  "unit": "kg",
+                  "type": "ADJUSTMENT",
+                  "quantity": "18.5000",
+                  "meaning": "sum of target balances"
+                },
+                {
+                  "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+                  "unit": "kg",
+                  "type": "IN",
+                  "quantity": "25.0000",
+                  "meaning": "total moved"
+                },
+                {
+                  "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+                  "unit": "kg",
+                  "type": "OUT",
+                  "quantity": "5.0000",
+                  "meaning": "total moved"
+                }
+              ]
+            },
+            "generated_at": "2026-11-21T00:57:58.112352Z"
+          },
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "report_type": "FARM_SUMMARY",
+            "period_start": "2026-11-01",
+            "period_end": "2026-11-30",
+            "id": "f40ac188-54cf-459a-89b6-59f009d3f30b",
+            "report_data": {
+              "period_start": "2026-11-01",
+              "period_end": "2026-11-30",
+              "methodology": "Inclusive UTC dates; expenses grouped by currency; production by crop and unit; losses by type, crop and unit. Losses do not alter stock. Inventory is current balance at generation; movements are grouped by item, type and unit for the period.",
+              "expenses": [
+                {
+                  "currency": "LRD",
+                  "amount": "1500.00"
+                },
+                {
+                  "currency": "USD",
+                  "amount": "25.00"
+                }
+              ],
+              "harvests": [
+                {
+                  "crop_name": "Cocoa",
+                  "unit": "bags",
+                  "quantity": "2.0000"
+                },
+                {
+                  "crop_name": "Cocoa",
+                  "unit": "kg",
+                  "quantity": "250.0000"
+                }
+              ],
+              "losses": [
+                {
+                  "loss_type": "Spoilage",
+                  "unit": "kg",
+                  "crop_name": "Cocoa",
+                  "quantity": "10.0000"
+                }
+              ],
+              "inventory": [
+                {
+                  "unit": "kg",
+                  "item_count": 1,
+                  "quantity": "18.5000"
+                }
+              ],
+              "movements": [
+                {
+                  "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+                  "unit": "kg",
+                  "type": "ADJUSTMENT",
+                  "quantity": "18.5000",
+                  "meaning": "sum of target balances"
+                },
+                {
+                  "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+                  "unit": "kg",
+                  "type": "IN",
+                  "quantity": "25.0000",
+                  "meaning": "total moved"
+                },
+                {
+                  "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+                  "unit": "kg",
+                  "type": "OUT",
+                  "quantity": "5.0000",
+                  "meaning": "total moved"
+                }
+              ],
+              "traceability": [
+                {
+                  "status": "HARVESTED",
+                  "event_count": 1
+                },
+                {
+                  "status": "STORED",
+                  "event_count": 1
+                }
+              ]
+            },
+            "generated_at": "2026-11-21T00:57:58.095422Z"
+          }
+        ],
+        "count": 6
+      }
+    },
+    {
+      "name": "Get farm overview",
+      "method": "GET",
+      "path": "/api/v1/farms/bb32844b-3e2d-4c76-adf4-26a308524bbe/overview?recent_limit=5",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "farm": {
+          "name": "Bong Cocoa Farm",
+          "county": "Bong",
+          "farm_type": "Crops",
+          "community": "Gbarnga Central",
+          "id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+          "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+          "created_at": "2026-11-21T00:57:57.601260Z"
+        },
+        "inventory_item_count": 1,
+        "expenses": [
+          {
+            "currency": "LRD",
+            "amount": "1500.00"
+          },
+          {
+            "currency": "USD",
+            "amount": "25.00"
+          }
+        ],
+        "harvests": [
+          {
+            "crop_name": "Cocoa",
+            "unit": "bags",
+            "quantity": "2.0000"
+          },
+          {
+            "crop_name": "Cocoa",
+            "unit": "kg",
+            "quantity": "250.0000"
+          }
+        ],
+        "losses": [
+          {
+            "loss_type": "Spoilage",
+            "unit": "kg",
+            "crop_name": "Cocoa",
+            "quantity": "10.0000"
+          }
+        ],
+        "recent_inventory_movements": [
+          {
+            "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+            "transaction_type": "ADJUSTMENT",
+            "quantity": "18.5000",
+            "transaction_date": "2026-11-21T10:00:00Z",
+            "notes": "Physical count correction",
+            "idempotency_key": "2f359e7f-8ca0-455b-a7c5-625fb6521b34",
+            "id": "bc63ba05-988d-45dd-9404-4f18d94e35bc",
+            "balance_after": "18.5000",
+            "created_at": "2026-11-21T00:57:57.812677Z"
+          },
+          {
+            "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+            "transaction_type": "OUT",
+            "quantity": "5.0000",
+            "transaction_date": "2026-11-21T09:00:00Z",
+            "notes": "Seeds used for planting",
+            "idempotency_key": "3a5393af-739b-44b9-9ef0-884a28acbd42",
+            "id": "f2786fbd-9190-40a7-99c5-510b5ea50622",
+            "balance_after": "20.0000",
+            "created_at": "2026-11-21T00:57:57.799046Z"
+          },
+          {
+            "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+            "transaction_type": "IN",
+            "quantity": "25.0000",
+            "transaction_date": "2026-11-21T08:00:00Z",
+            "notes": "Opening stock for Postman test",
+            "idempotency_key": "e44c4a17-10d7-4462-94e6-0584d8ad3b81",
+            "id": "3e5d5117-d74e-4667-a1bf-615629ccf2b8",
+            "balance_after": "25.0000",
+            "created_at": "2026-11-21T00:57:57.776539Z"
+          }
+        ],
+        "recent_harvests": [
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "crop_name": "Cocoa",
+            "quantity": "2.0000",
+            "unit": "bags",
+            "harvest_date": "2026-11-21",
+            "notes": "Separate measurement unit",
+            "id": "5db9410f-ad8d-429c-99c7-349eec678887",
+            "created_at": "2026-11-21T00:57:57.946586Z"
+          },
+          {
+            "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+            "crop_name": "Cocoa",
+            "quantity": "250.0000",
+            "unit": "kg",
+            "harvest_date": "2026-11-21",
+            "notes": "Sorted and weighed",
+            "id": "ab28d614-8f72-435b-bf9f-db17d502caa1",
+            "created_at": "2026-11-21T00:57:57.931618Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Unauthenticated request is rejected",
+      "method": "GET",
+      "path": "/api/v1/farms/",
+      "request_body": null,
+      "expected_status": 401,
+      "actual_status": 401,
+      "passed": true,
+      "response_json": {
+        "detail": "Not authenticated"
+      }
+    },
+    {
+      "name": "Cannot directly edit stock balance",
+      "method": "PATCH",
+      "path": "/api/v1/items/ff5581f1-eac7-4761-9662-6bebb1106029",
+      "request_body": {
+        "quantity": "999.0000"
+      },
+      "expected_status": 422,
+      "actual_status": 422,
+      "passed": true,
+      "response_json": {
+        "detail": [
+          {
+            "type": "extra_forbidden",
+            "loc": [
+              "body",
+              "quantity"
+            ],
+            "msg": "Extra inputs are not permitted",
+            "input": "999.0000"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Insufficient stock is rejected",
+      "method": "POST",
+      "path": "/api/v1/inventory-transactions",
+      "request_body": {
+        "item_id": "ff5581f1-eac7-4761-9662-6bebb1106029",
+        "transaction_type": "OUT",
+        "quantity": "999.0000",
+        "idempotency_key": "988f6ca6-655c-4ad8-a174-35990ca1c4ea"
+      },
+      "expected_status": 409,
+      "actual_status": 409,
+      "passed": true,
+      "response_json": {
+        "detail": "Insufficient stock or conflicting retry"
+      }
+    },
+    {
+      "name": "Zero expense is rejected",
+      "method": "POST",
+      "path": "/api/v1/farm-expenses",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "category": "Labor",
+        "amount": "0",
+        "currency": "LRD",
+        "expense_date": "2026-11-21"
+      },
+      "expected_status": 422,
+      "actual_status": 422,
+      "passed": true,
+      "response_json": {
+        "detail": [
+          {
+            "type": "greater_than",
+            "loc": [
+              "body",
+              "amount"
+            ],
+            "msg": "Input should be greater than 0",
+            "input": "0",
+            "ctx": {
+              "gt": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Invalid currency is rejected",
+      "method": "POST",
+      "path": "/api/v1/farm-expenses",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "category": "Labor",
+        "amount": "5",
+        "currency": "EUR",
+        "expense_date": "2026-11-21"
+      },
+      "expected_status": 422,
+      "actual_status": 422,
+      "passed": true,
+      "response_json": {
+        "detail": [
+          {
+            "type": "literal_error",
+            "loc": [
+              "body",
+              "currency"
+            ],
+            "msg": "Input should be 'LRD' or 'USD'",
+            "input": "EUR",
+            "ctx": {
+              "expected": "'LRD' or 'USD'"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Invalid report period is rejected",
+      "method": "POST",
+      "path": "/api/v1/farm-reports/generate",
+      "request_body": {
+        "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+        "report_type": "EXPENSE",
+        "period_start": "2026-11-30",
+        "period_end": "2026-11-01"
+      },
+      "expected_status": 422,
+      "actual_status": 422,
+      "passed": true,
+      "response_json": {
+        "detail": [
+          {
+            "type": "value_error",
+            "loc": [
+              "body"
+            ],
+            "msg": "Value error, period_end must be on or after period_start",
+            "input": {
+              "farm_id": "bb32844b-3e2d-4c76-adf4-26a308524bbe",
+              "report_type": "EXPENSE",
+              "period_start": "2026-11-30",
+              "period_end": "2026-11-01"
+            },
+            "ctx": {
+              "error": {}
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Item with ledger history cannot be deleted",
+      "method": "DELETE",
+      "path": "/api/v1/items/ff5581f1-eac7-4761-9662-6bebb1106029",
+      "request_body": null,
+      "expected_status": 409,
+      "actual_status": 409,
+      "passed": true,
+      "response_json": {
+        "detail": "Item has stock history"
+      }
+    },
+    {
+      "name": "Harvest with history cannot be deleted",
+      "method": "DELETE",
+      "path": "/api/v1/harvests/ab28d614-8f72-435b-bf9f-db17d502caa1",
+      "request_body": null,
+      "expected_status": 409,
+      "actual_status": 409,
+      "passed": true,
+      "response_json": {
+        "detail": "Harvest has dependent records"
+      }
+    },
+    {
+      "name": "Farm with business records cannot be deleted",
+      "method": "DELETE",
+      "path": "/api/v1/farms/bb32844b-3e2d-4c76-adf4-26a308524bbe",
+      "request_body": null,
+      "expected_status": 409,
+      "actual_status": 409,
+      "passed": true,
+      "response_json": {
+        "detail": "Farm has business records"
+      }
+    },
+    {
+      "name": "Register another farmer",
+      "method": "POST",
+      "path": "/api/v1/farmers/signup",
+      "request_body": {
+        "full_name": "Second Postman Farmer",
+        "phone_number": "+231835013448",
+        "password": "[REDACTED]",
+        "farm": {
+          "name": "Lofa Farm",
+          "county": "Lofa",
+          "farm_type": "Crops"
+        }
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "user": {
+          "email": null,
+          "phone_number": "+231835013448",
+          "is_active": true,
+          "is_superuser": false,
+          "full_name": "Second Postman Farmer",
+          "id": "65272398-b906-4cbd-964c-7e4490de22e8",
+          "created_at": "2026-11-21T00:57:58.296487Z"
+        },
+        "farm": {
+          "name": "Lofa Farm",
+          "county": "Lofa",
+          "farm_type": "Crops",
+          "community": null,
+          "id": "5ed25728-084a-4d89-a111-53eaf2b5f3aa",
+          "owner_id": "65272398-b906-4cbd-964c-7e4490de22e8",
+          "created_at": "2026-11-21T00:57:58.296636Z"
+        }
+      }
+    },
+    {
+      "name": "Login second farmer",
+      "method": "POST",
+      "path": "/api/v1/login/access-token",
+      "request_body": {
+        "username": "+231835013448",
+        "password": "[REDACTED]"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "access_token": "[REDACTED]",
+        "token_type": "bearer"
+      }
+    },
+    {
+      "name": "Second farmer cannot read original farm",
+      "method": "GET",
+      "path": "/api/v1/farms/bb32844b-3e2d-4c76-adf4-26a308524bbe",
+      "request_body": null,
+      "expected_status": 404,
+      "actual_status": 404,
+      "passed": true,
+      "response_json": {
+        "detail": "Farm not found"
+      }
+    },
+    {
+      "name": "Second farmer cannot read original harvest",
+      "method": "GET",
+      "path": "/api/v1/harvests/ab28d614-8f72-435b-bf9f-db17d502caa1",
+      "request_body": null,
+      "expected_status": 404,
+      "actual_status": 404,
+      "passed": true,
+      "response_json": {
+        "detail": "Farm not found"
+      }
+    },
+    {
+      "name": "Second farmer cannot read original report",
+      "method": "GET",
+      "path": "/api/v1/farm-reports/f40ac188-54cf-459a-89b6-59f009d3f30b",
+      "request_body": null,
+      "expected_status": 404,
+      "actual_status": 404,
+      "passed": true,
+      "response_json": {
+        "detail": "Farm not found"
+      }
+    },
+    {
+      "name": "Second farmer cannot read original batch history",
+      "method": "GET",
+      "path": "/api/v1/traceability/batches/AG-ab28d6148f72435bbf9fdb17d502caa1-333895f7b3fc49fc99c18019c71aaa92",
+      "request_body": null,
+      "expected_status": 404,
+      "actual_status": 404,
+      "passed": true,
+      "response_json": {
+        "detail": "Batch not found"
+      }
+    },
+    {
+      "name": "Second farmer cannot read original item",
+      "method": "GET",
+      "path": "/api/v1/items/ff5581f1-eac7-4761-9662-6bebb1106029",
+      "request_body": null,
+      "expected_status": 403,
+      "actual_status": 403,
+      "passed": true,
+      "response_json": {
+        "detail": "Not enough permissions"
+      }
+    },
+    {
+      "name": "Create empty disposable farm",
+      "method": "POST",
+      "path": "/api/v1/farms/",
+      "request_body": {
+        "name": "Disposable Test Farm",
+        "county": "Bong",
+        "farm_type": "Crops"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "name": "Disposable Test Farm",
+        "county": "Bong",
+        "farm_type": "Crops",
+        "community": null,
+        "id": "93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+        "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:58.394262Z"
+      }
+    },
+    {
+      "name": "Create disposable item without ledger",
+      "method": "POST",
+      "path": "/api/v1/items/",
+      "request_body": {
+        "title": "Disposable Tool",
+        "farm_id": "93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+        "unit": "piece"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "category": null,
+        "unit": "piece",
+        "reorder_level": null,
+        "title": "Disposable Tool",
+        "description": null,
+        "farm_id": "93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+        "quantity": "0.0000",
+        "updated_at": "2026-11-21T00:57:58.405975Z",
+        "id": "da6705c6-094e-4070-8c5f-cf927f229187",
+        "owner_id": "f33ec9f5-6665-496d-9a81-946ffd279489",
+        "created_at": "2026-11-21T00:57:58.405992Z"
+      }
+    },
+    {
+      "name": "Delete disposable item",
+      "method": "DELETE",
+      "path": "/api/v1/items/da6705c6-094e-4070-8c5f-cf927f229187",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "message": "Item deleted successfully"
+      }
+    },
+    {
+      "name": "Create disposable expense",
+      "method": "POST",
+      "path": "/api/v1/farm-expenses",
+      "request_body": {
+        "farm_id": "93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+        "category": "Other",
+        "amount": "1.00",
+        "currency": "LRD",
+        "expense_date": "2026-11-21"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+        "category": "Other",
+        "description": null,
+        "amount": "1.00",
+        "currency": "LRD",
+        "expense_date": "2026-11-21",
+        "id": "43981246-4055-4624-abfc-087bcb26d1d5",
+        "created_at": "2026-11-21T00:57:58.426182Z"
+      }
+    },
+    {
+      "name": "Delete disposable expense",
+      "method": "DELETE",
+      "path": "/api/v1/farm-expenses/43981246-4055-4624-abfc-087bcb26d1d5",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "message": "Record deleted successfully"
+      }
+    },
+    {
+      "name": "Create disposable harvest",
+      "method": "POST",
+      "path": "/api/v1/harvests",
+      "request_body": {
+        "farm_id": "93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+        "crop_name": "Rice",
+        "quantity": "1",
+        "unit": "kg",
+        "harvest_date": "2026-11-21"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+        "crop_name": "Rice",
+        "quantity": "1.0000",
+        "unit": "kg",
+        "harvest_date": "2026-11-21",
+        "notes": null,
+        "id": "ab696c2a-e416-49e2-b15c-502ea7e6a276",
+        "created_at": "2026-11-21T00:57:58.446452Z"
+      }
+    },
+    {
+      "name": "Create disposable loss",
+      "method": "POST",
+      "path": "/api/v1/loss-records",
+      "request_body": {
+        "farm_id": "93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+        "loss_type": "Other",
+        "quantity": "1",
+        "unit": "kg",
+        "recorded_at": "2026-11-21T13:00:00Z"
+      },
+      "expected_status": 201,
+      "actual_status": 201,
+      "passed": true,
+      "response_json": {
+        "farm_id": "93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+        "harvest_id": null,
+        "loss_type": "Other",
+        "quantity": "1.0000",
+        "unit": "kg",
+        "reason": null,
+        "recorded_at": "2026-11-21T13:00:00Z",
+        "id": "86d86046-adcb-4406-b082-b1625741f510"
+      }
+    },
+    {
+      "name": "Delete disposable loss",
+      "method": "DELETE",
+      "path": "/api/v1/loss-records/86d86046-adcb-4406-b082-b1625741f510",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "message": "Record deleted successfully"
+      }
+    },
+    {
+      "name": "Delete disposable harvest",
+      "method": "DELETE",
+      "path": "/api/v1/harvests/ab696c2a-e416-49e2-b15c-502ea7e6a276",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "message": "Record deleted successfully"
+      }
+    },
+    {
+      "name": "Delete empty disposable farm",
+      "method": "DELETE",
+      "path": "/api/v1/farms/93e2bee5-8167-4784-ad71-9dfdc61fd71c",
+      "request_body": null,
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "response_json": {
+        "message": "Farm deleted successfully"
+      }
+    }
+  ]
+}
